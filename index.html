@@ -8,13 +8,45 @@
     <script>
       window.AUTOHEAL_SITE_ID = "https://dqwq-jr2f3nryf-yogesh-s-projects6.vercel.app";
       window.AUTOHEAL_ENDPOINT = "https://auomation.vercel.app";
+      
+      // Add event listener to handle abort signal
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+          // Abort API request when tab is closed or hidden
+          if (typeof abortController !== 'undefined') {
+            abortController.abort();
+          }
+        }
+      });
+      
+      // Create a new AbortController instance
+      const abortController = new AbortController();
+      
+      // Add try-catch block to handle API request error
+      try {
+        fetch('http://localhost:11434/api/tags', {
+          signal: abortController.signal,
+          timeout: 5000
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => {
+          if (error.name === 'AbortError') {
+            console.log('API request was aborted');
+          } else {
+            console.log('API request error:', error);
+          }
+        });
+      } catch (error) {
+        console.log('Error:', error);
+      }
     </script>
     <script src="https://auomation.vercel.app/sdk/autoheal.js"></script>
 </head>
 <body style="font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #0f172a; color: white;">
   <div style="text-align: center;">
-    <h1 style="margin-bottom: 8px;">Welcome to AutoHeal! 🚀</h1>
-    <p style="color: #94a3b8;">Click the ✨ icon in the bottom right to ask AI to build your site.</p>
+    <h1 style="margin-bottom: 8px;">Welcome to AutoHeal! \u2705</h1>
+    <p style="color: #94a3b8;">Click the \u2728 icon in the bottom right to ask AI to build your site.</p>
   </div>
 </body>
 </html>
