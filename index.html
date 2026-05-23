@@ -9,21 +9,22 @@
       window.AUTOHEAL_SITE_ID = "https://dqwq-jr2f3nryf-yogesh-s-projects6.vercel.app";
       window.AUTOHEAL_ENDPOINT = "https://auomation.vercel.app";
       
+      // Create a new AbortController instance
+      let abortController;
+      
       // Add event listener to handle abort signal
       document.addEventListener('visibilitychange', function() {
         if (document.visibilityState === 'hidden') {
           // Abort API request when tab is closed or hidden
-          if (typeof abortController !== 'undefined') {
-            abortController.abort();
+          if (abortController) {
+            abortController.abort('Tab closed or hidden');
           }
         }
       });
       
-      // Create a new AbortController instance
-      const abortController = new AbortController();
-      
       // Add try-catch block to handle API request error
       try {
+        abortController = new AbortController();
         fetch('http://localhost:11434/api/tags', {
           signal: abortController.signal,
           timeout: 5000
@@ -32,7 +33,7 @@
         .then(data => console.log(data))
         .catch(error => {
           if (error.name === 'AbortError') {
-            console.log('API request was aborted');
+            console.log('API request was aborted: ' + error.message);
           } else {
             console.log('API request error:', error);
           }
